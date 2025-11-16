@@ -60,8 +60,16 @@ def run_fmrca_audit(ticker: str):
     for event in runner_news.run(user_id=USER_ID, session_id=SESSION_ID, new_message=types.Content(role='user', parts=[types.Part(text=user_query)])):
         if event.content and event.is_final_response():
             # Assume the agent returns a JSON string, which we load
-            news_output_data = json.loads(event.content.parts[0].text)
-            news_summary = news_output_data.get('summary', 'No detailed news summary available.')
+            try:
+                response_text = event.content.parts[0].text if event.content.parts else ""
+                if response_text.strip():
+                    news_output_data = json.loads(response_text)
+                    news_summary = news_output_data.get('summary', response_text[:200])
+                else:
+                    news_summary = "No detailed news summary available."
+            except json.JSONDecodeError:
+                # If response is not JSON, use it as is
+                news_summary = event.content.parts[0].text if event.content.parts else "No detailed news summary available."
             break
             
     print(f"   -> News Summary: {news_summary[:80]}...")
@@ -74,8 +82,16 @@ def run_fmrca_audit(ticker: str):
     compliance_citations = ""
     for event in runner_compliance.run(user_id=USER_ID, session_id=SESSION_ID, new_message=types.Content(role='user', parts=[types.Part(text=f"Analyze this news summary for compliance risk: {compliance_input}")])):
         if event.content and event.is_final_response():
-            compliance_output_data = json.loads(event.content.parts[0].text)
-            compliance_citations = compliance_output_data.get('citations', 'No citations found.')
+            try:
+                response_text = event.content.parts[0].text if event.content.parts else ""
+                if response_text.strip():
+                    compliance_output_data = json.loads(response_text)
+                    compliance_citations = compliance_output_data.get('citations', response_text[:200])
+                else:
+                    compliance_citations = "No citations found."
+            except json.JSONDecodeError:
+                # If response is not JSON, use it as is
+                compliance_citations = event.content.parts[0].text if event.content.parts else "No citations found."
             break
             
     print(f"   -> RAG Citations Retrieved: {compliance_citations[:80]}...")
@@ -92,8 +108,16 @@ def run_fmrca_audit(ticker: str):
     risk_score = ""
     for event in runner_risk.run(user_id=USER_ID, session_id=SESSION_ID, new_message=types.Content(role='user', parts=[types.Part(text=risk_input)])):
         if event.content and event.is_final_response():
-            risk_output_data = json.loads(event.content.parts[0].text)
-            risk_score = risk_output_data.get('risk_score', 'Calculation failed or not explicitly stated.')
+            try:
+                response_text = event.content.parts[0].text if event.content.parts else ""
+                if response_text.strip():
+                    risk_output_data = json.loads(response_text)
+                    risk_score = risk_output_data.get('risk_score', response_text[:200])
+                else:
+                    risk_score = "Calculation failed or not explicitly stated."
+            except json.JSONDecodeError:
+                # If response is not JSON, use it as is
+                risk_score = event.content.parts[0].text if event.content.parts else "Calculation failed or not explicitly stated."
             break
             
     print(f"   -> Final Risk Score: {risk_score[:80]}...")
@@ -111,8 +135,16 @@ def run_fmrca_audit(ticker: str):
     final_report_text = ""
     for event in runner_report.run(user_id=USER_ID, session_id=SESSION_ID, new_message=types.Content(role='user', parts=[types.Part(text=final_input)])):
         if event.content and event.is_final_response():
-            final_report_data = json.loads(event.content.parts[0].text)
-            final_report_text = final_report_data.get('report', final_report_data)
+            try:
+                response_text = event.content.parts[0].text if event.content.parts else ""
+                if response_text.strip():
+                    final_report_data = json.loads(response_text)
+                    final_report_text = final_report_data.get('report', response_text)
+                else:
+                    final_report_text = "No report generated."
+            except json.JSONDecodeError:
+                # If response is not JSON, use it as is
+                final_report_text = event.content.parts[0].text if event.content.parts else "No report generated."
             break
             
     # 5. Output Final Report
