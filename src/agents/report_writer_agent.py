@@ -1,6 +1,8 @@
-from google_adk.agents import LlmAgent
+# src/agents/report_writer_agent.py
 
-class ReportWriterAgent(LlmAgent):
+from google.adk.agents import Agent # Corrected Class Name
+
+class ReportWriterAgent(Agent):
     """
     Agent responsible for compiling the outputs from all preceding agents 
     (News, Compliance, Risk Scoring) into the final professional report.
@@ -10,7 +12,6 @@ class ReportWriterAgent(LlmAgent):
         super().__init__(
             name="ReportWriterAgent",
             model="gemini-2.5-flash",
-            # The instruction mandates compilation and formatting, not new analysis
             instruction=(
                 "You are the final Report Generator. Your input contains three distinct sections: "
                 "NEWS, COMPLIANCE CITATIONS, and RISK SCORE. "
@@ -19,7 +20,6 @@ class ReportWriterAgent(LlmAgent):
                 "Do not introduce any new analysis or information; strictly synthesize the provided data. "
                 "The final output MUST be a JSON object with a key 'report' containing the complete Markdown text."
             ),
-            # This agent requires no tools
             tools=[],
             **kwargs
         )
