@@ -24,12 +24,12 @@ def run_fmrca_audit(ticker: str):
         return
     
     # 2. Setup Session Service and Runner
-    APP_NAME = "FMRCA_App"
+    APP_NAME = "agents"
     USER_ID = "fmrca_user"
     SESSION_ID = f"audit_{ticker}"
 
     session_service = InMemorySessionService()
-    session = session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
+    session = session_service.create_session_sync(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
     
     # Fetch mock historical data (input for Risk Scoring Agent)
     price_data = fetch_historical_price_data(ticker)

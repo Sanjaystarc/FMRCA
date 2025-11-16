@@ -1,7 +1,7 @@
 # src/agents/risk_scoring_agent.py
 
 from google.adk.agents import Agent # Corrected Class Name
-from google.adk.tools import code_execution# Fixed Import Path
+from google.adk.tools import function_tool # Fixed Import Path
 
 class RiskScoringAgent(Agent):
     """
@@ -20,6 +20,6 @@ class RiskScoringAgent(Agent):
                 "The final output MUST be a JSON object with a key 'risk_score' containing the calculated volatility percentage and a brief explanation."
             ),
             # Initialize the tool class when passing it to the agent
-            tools=[code_execution()],
+            tools=[],
             **kwargs
         )
